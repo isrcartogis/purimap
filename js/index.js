@@ -15,3 +15,5 @@ const map = L.map('map',{
     center: [ 31.983617, 34.7703552 ],
     zoom: 11,
 });
+
+L.control.logo({ position: 'bottomleft' }).addTo(map);
