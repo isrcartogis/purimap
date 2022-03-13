@@ -13,6 +13,23 @@ body {
     padding: 5px;
     background-color: white;
 }
-.questions  button {
+.questions  input {
     margin-bottom: 3px;
+    padding: 2px;
+    width: 150px;
+}
+.continue {
+    direction: rtl;
+    background-color: white;
+}
+.continue h2 {
+    text-align: center;
+}
+.continue h1 {
+    text-align: center;
+}
+.continue input {
+    width: 100px;
+    padding: 5px;
+    margin: 5px;
 }

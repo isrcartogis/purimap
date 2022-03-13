@@ -1,4 +1,10 @@
 let features = [];
+let userPoints = 0;
+let currentPolygonLayer = L.geoJson({
+    "type": "FeatureCollection",
+    "features": []
+  })
+
 function getUpdatedLeaderboard(){
     let playersList = [
         {name:"player1",score:57},
@@ -67,6 +73,42 @@ function selectQuestionOptions(features, polygon){
     return ids;
     
 }
+function getNewRandoms(){
+    if(map.hasLayer(currentPolygonLayer)){
+        map.removeLayer(currentPolygonLayer)
+    }
+    if(currentQuestions._map){
+        map.removeControl(currentQuestions)
+    }
+    if(whatnow._map){
+        map.removeControl(whatnow)
+    }
+    polygon = selectRandomPolygon(features);
+    questionOptions = selectQuestionOptions(features,polygon);
+    center = selectRandomLocation(features);
+    newPolygon = polygonToMarker(center.geometry.coordinates, polygon);
+    newBounds = turf.bboxPolygon(turf.bbox(newPolygon))
+    newLBounds = L.geoJson(newBounds).getBounds()
+    currentPolygonLayer = L.geoJson(newPolygon,{color: 'red'})
+    currentPolygonLayer.addTo(map);
+    map.fitBounds(newLBounds);
+    currentQuestions = L.control.question({ids:questionOptions})
+    currentQuestions.addTo(map)
+}
+
+function getAnswer(e){
+    if(e.target.id == polygon.properties.SEMEL_YISH){
+        userPoints += 1
+    }
+    if(currentQuestions._map){
+        map.removeControl(currentQuestions)
+    }
+    if(whatnow._map){
+        map.removeControl(whatnow)
+    }
+    whatnow = L.control.continue({score:userPoints});
+    whatnow.addTo(map);
+}
 
 async function onMapLoad(){
     const response = await fetch('set20k.fgb')
@@ -80,7 +122,10 @@ async function onMapLoad(){
     newPolygon = polygonToMarker(center.geometry.coordinates, polygon);
     newBounds = turf.bboxPolygon(turf.bbox(newPolygon))
     newLBounds = L.geoJson(newBounds).getBounds()
-    L.geoJson(newPolygon,{color: 'red'}).addTo(map);
+    currentPolygonLayer = L.geoJson(newPolygon,{color: 'red'})
+    currentPolygonLayer.addTo(map);
     map.fitBounds(newLBounds);
-    L.control.question({ids:questionOptions}).addTo(map)
+    currentQuestions = L.control.question({ids:questionOptions})
+    whatnow = L.control.continue();
+    currentQuestions.addTo(map)
 }

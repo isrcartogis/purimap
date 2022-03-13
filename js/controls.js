@@ -36,10 +36,12 @@ L.Control.Question = L.Control.extend({
         this._container.append(header)
 
         for(var i=0;i<this.options.ids.length;i++){
-            let cityName = L.DomUtil.create('button');
-            console.log(features.filter(x => x.properties.SEMEL_YISH === this.options.ids[i]))
-            cityName.value = features.filter(x => x.properties.SEMEL_YISH === this.options.ids[i])[0].properties.SEMEL_YISH
-            cityName.innerText = features.filter(x => x.properties.SEMEL_YISH === this.options.ids[i])[0].properties.Shem_Yishu
+            let cityName = L.DomUtil.create('input');
+            cityName.type = "button";
+            cityName.name = "citySelect";
+            cityName.id = features.filter(x => x.properties.SEMEL_YISH === this.options.ids[i])[0].properties.SEMEL_YISH
+            cityName.value = features.filter(x => x.properties.SEMEL_YISH === this.options.ids[i])[0].properties.Shem_Yishu
+            cityName.onclick = getAnswer
             this._container.append(cityName,L.DomUtil.create('br'))
         }
 
@@ -52,6 +54,48 @@ L.Control.Question = L.Control.extend({
 })
 L.control.question = function(opts) {
     return new L.Control.Question(opts);
+}
+
+L.Control.Continue = L.Control.extend({
+    options : {
+        score:0
+    },
+
+    onAdd: function(map) {
+
+        this._container = L.DomUtil.create('div','leaflet-bar continue');
+        let header = L.DomUtil.create('h2');
+        header.innerText = "התוצאה שלך"
+        this._container.append(header)
+
+        let score = L.DomUtil.create('h1');
+        score.innerText = this.options.score;
+        this._container.append(score);
+
+
+        let again = L.DomUtil.create('input');
+        again.type = "button"
+        again.id = "again";
+        again.value = "נשחק שוב?"
+        again.onclick = getNewRandoms;
+
+        let seeScores = L.DomUtil.create('input');
+        seeScores.type = "button"
+        seeScores.id = "seeScores";
+        seeScores.value = "נסיים ונשלח את התוצאה"
+
+        this._container.append(again, seeScores);
+
+
+        return this._container;
+
+    },
+    onRemove: function(map) {
+        // Nothing to do here
+    }
+})
+L.control.continue = function(opts) {
+    return new L.Control.Continue(opts);
 }
 
 L.Control.Leaderboard = L.Control.extend({
