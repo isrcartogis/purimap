@@ -1,3 +1,4 @@
+let features = [];
 function getUpdatedLeaderboard(){
     let playersList = [
         {name:"player1",score:57},
@@ -15,18 +16,19 @@ function getUpdatedLeaderboard(){
     return playersList
 }
 
-function polygonToMarker(center, coordinates, bearing, scale ){
+function polygonToMarker(center, polygon, bearing, scale ){
     distances = []
     bearings = []
-    centroid = turf.center(turf.polygon([coordinates]))
-        for(i in coordinates){
-            to = turf.point(coordinates[i]);
-            options = {units: 'kilometers'};
-            distanceI = turf.distance(centroid, to, options);
-            bearingI = turf.bearing(centroid, to);
-            bearings.push(bearingI)
-            distances.push(distanceI)
-            }
+    coordinates = polygon.geometry.coordinates[0][0];
+    centroid = turf.center(polygon)
+    for(i in coordinates){
+        to = turf.point(coordinates[i]);
+        options = {units: 'kilometers'};
+        distanceI = turf.distance(centroid, to, options);
+        bearingI = turf.bearing(centroid, to);
+        bearings.push(bearingI)
+        distances.push(distanceI)
+        }
     //console.log({distances, bearings})
     points = []
     for(j in distances){
@@ -43,4 +45,42 @@ function polygonToMarker(center, coordinates, bearing, scale ){
         polygon = turf.transformScale(polygon, scale);
     }
     return polygon
+}
+
+function selectRandomPolygon(features){
+    let i = Math.floor(Math.random() * features.length);
+    let polygon = features[i];
+    return polygon
+}
+function selectRandomLocation(features){
+    let i = Math.floor(Math.random() * features.length);
+    center = turf.centroid(features[i]);
+    return center;
+}
+function selectQuestionOptions(features, polygon){
+    ids = [polygon.properties.SEMEL_YISH]
+    for(var i=0;i<4;i++){
+        optionalFeatures = features.filter(x => ids.includes(x.properties.SEMEL_YISH) === false)
+        let j = Math.floor(Math.random() * optionalFeatures.length);
+        ids.push(optionalFeatures[j].properties.SEMEL_YISH)
+    }
+    return ids;
+    
+}
+
+async function onMapLoad(){
+    const response = await fetch('set20k.fgb')
+    for await (const f of flatgeobuf.deserialize(response.body)){
+        feature = f;
+        features.push(feature)
+    }   
+    polygon = selectRandomPolygon(features);
+    questionOptions = selectQuestionOptions(features,polygon);
+    center = selectRandomLocation(features);
+    newPolygon = polygonToMarker(center.geometry.coordinates, polygon);
+    newBounds = turf.bboxPolygon(turf.bbox(newPolygon))
+    newLBounds = L.geoJson(newBounds).getBounds()
+    L.geoJson(newPolygon,{color: 'red'}).addTo(map);
+    map.fitBounds(newLBounds);
+    L.control.question({ids:questionOptions}).addTo(map)
 }

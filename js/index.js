@@ -17,3 +17,5 @@ const map = L.map('map',{
 });
 
 L.control.logo({ position: 'bottomleft' }).addTo(map);
+
+onMapLoad()
