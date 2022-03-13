@@ -16,11 +16,10 @@ function getUpdatedLeaderboard(){
         {name:"player9",score:12},
         {name:"player90",score:1},
         {name:"player930",score:10},
-        {name:"player93",score:18},
-        {name:"player58",score:58},
         {name:"player52",score:4},
         {name:"player69",score:5}
         ]
+    playersList.sort(function (a, b) {return b.score - a.score});
     return playersList
 }
 
@@ -76,8 +75,36 @@ function selectQuestionOptions(features, polygon){
     
 }
 function getNewRandoms(){
-    if(map.hasLayer(currentPolygonLayer)){
-        map.removeLayer(currentPolygonLayer)
+    if(usableFeatures.length >= 5){
+        if(map.hasLayer(currentPolygonLayer)){
+            map.removeLayer(currentPolygonLayer)
+        }
+        if(currentQuestions._map){
+            map.removeControl(currentQuestions)
+        }
+        if(whatnow._map){
+            map.removeControl(whatnow)
+        }
+        polygon = selectRandomPolygon(usableFeatures);
+        questionOptions = selectQuestionOptions(usableFeatures,polygon);
+        center = selectRandomLocation(usableFeatures);
+        newPolygon = polygonToMarker(center.geometry.coordinates, polygon);
+        newBounds = turf.bboxPolygon(turf.bbox(newPolygon))
+        newLBounds = L.geoJson(newBounds).getBounds()
+        currentPolygonLayer = L.geoJson(newPolygon,{color: 'red'})
+        currentPolygonLayer.addTo(map);
+        map.fitBounds(newLBounds);
+        currentQuestions = L.control.question({ids:questionOptions})
+        currentQuestions.addTo(map)
+    }else{
+        openScoreboard(true)
+    }
+    
+}
+
+function openScoreboard(done=false){
+    if(leaderboard._map){
+        map.removeControl(leaderboard)
     }
     if(currentQuestions._map){
         map.removeControl(currentQuestions)
@@ -85,17 +112,7 @@ function getNewRandoms(){
     if(whatnow._map){
         map.removeControl(whatnow)
     }
-    polygon = selectRandomPolygon(usableFeatures);
-    questionOptions = selectQuestionOptions(usableFeatures,polygon);
-    center = selectRandomLocation(usableFeatures);
-    newPolygon = polygonToMarker(center.geometry.coordinates, polygon);
-    newBounds = turf.bboxPolygon(turf.bbox(newPolygon))
-    newLBounds = L.geoJson(newBounds).getBounds()
-    currentPolygonLayer = L.geoJson(newPolygon,{color: 'red'})
-    currentPolygonLayer.addTo(map);
-    map.fitBounds(newLBounds);
-    currentQuestions = L.control.question({ids:questionOptions})
-    currentQuestions.addTo(map)
+    leaderboard.addTo(map)
 }
 
 function getAnswer(e){

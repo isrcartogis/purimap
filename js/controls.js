@@ -5,6 +5,7 @@ L.Control.Logo = L.Control.extend({
         this._container.style.cursor = "pointer";
         this._container.target = "_blank";
         this._container.rel="noreferrer noopener"
+        L.DomEvent.disableScrollPropagation(this._container)
 
         let img =  L.DomUtil.create('img');
         img.src = '../logo.png';
@@ -31,6 +32,7 @@ L.Control.Question = L.Control.extend({
     },
     onAdd: function(map){
         this._container = L.DomUtil.create('div','leaflet-bar questions');
+        L.DomEvent.disableScrollPropagation(this._container)
 
         let header = L.DomUtil.create('h3');
         header.innerText = "מי אני?"
@@ -66,6 +68,8 @@ L.Control.Continue = L.Control.extend({
     onAdd: function(map) {
 
         this._container = L.DomUtil.create('div','leaflet-bar continue');
+        L.DomEvent.disableScrollPropagation(this._container)
+
         let header = L.DomUtil.create('h2');
         header.innerText = "התוצאה שלך"
         this._container.append(header)
@@ -85,6 +89,7 @@ L.Control.Continue = L.Control.extend({
         seeScores.type = "button"
         seeScores.id = "seeScores";
         seeScores.value = "נסיים ונשלח את התוצאה"
+        seeScores.onclick = openScoreboard
 
         this._container.append(again, seeScores);
 
@@ -103,40 +108,35 @@ L.control.continue = function(opts) {
 L.Control.Leaderboard = L.Control.extend({
     onAdd: function(map) {
         let topPlayers = getUpdatedLeaderboard()
-        this._container = L.DomUtil.create('div');
+        this._container = L.DomUtil.create('div', 'leaflet-bar');
+        L.DomEvent.disableScrollPropagation(this._container)
         this._container.id = "leaderboard"
 
-        /*
-        <div id="container">
-            <div class="row">
-                <div class="name">Player1</div><div class="score">430</div>
-            </div>
+        let trophy = L.DomUtil.create('h1')
+        trophy.innerText = "  🏆  "
+        this._container.append(trophy)
 
-            <div class="row">
-                <div class="name">Player2</div><div class="score">580</div>
-            </div>
-
-            <div class="row">
-                <div class="name">Player3</div><div class="score">310</div>
-            </div>
-
-            <div class="row">
-                <div class="name">Player4</div><div class="score">640</div>
-            </div>
-
-            <div class="row">
-                <div class="name">Player5</div><div class="score">495</div>
-            </div>
-            </div>
-        */
-
-        
-
-        let img =  L.DomUtil.create('img');
-        img.src = '../logo.png';
-        img.style.width = '150px';
-
-        this._container.append(img)
+        for(var i=0;i<10;i++){
+            let player = topPlayers[i]
+            if(player && player.name && player.score){
+                let row = L.DomUtil.create('div','row');
+                let name = L.DomUtil.create('div','name');
+                if(i === 0){
+                    name.innerText = " 🥇 " + player.name 
+                }else if(i === 1){
+                    name.innerText = " 🥈 " + player.name 
+                }else if(i === 2){
+                    name.innerText = " 🥉 " + player.name 
+                }else{
+                    name.innerText = player.name
+                }
+                
+                let score = L.DomUtil.create('div','score');
+                score.innerText = player.score
+                row.append(name,score)
+                this._container.append(row)
+            }
+        }
 
         return this._container;
     },
@@ -145,4 +145,7 @@ L.Control.Leaderboard = L.Control.extend({
         // Nothing to do here
     }
 });
+L.control.leaderboard = function(opts) {
+    return new L.Control.Leaderboard(opts);
+}
 
