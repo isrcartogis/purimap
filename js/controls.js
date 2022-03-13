@@ -24,6 +24,36 @@ L.control.logo = function(opts) {
     return new L.Control.Logo(opts);
 }
 
+L.Control.Question = L.Control.extend({
+    options: {
+        ids: [9000,3000,5000,2000]
+    },
+    onAdd: function(map){
+        this._container = L.DomUtil.create('div','leaflet-bar questions');
+
+        let header = L.DomUtil.create('h3');
+        header.innerText = "מי אני?"
+        this._container.append(header)
+
+        for(var i=0;i<this.options.ids.length;i++){
+            let cityName = L.DomUtil.create('button');
+            console.log(features.filter(x => x.properties.SEMEL_YISH === this.options.ids[i]))
+            cityName.value = features.filter(x => x.properties.SEMEL_YISH === this.options.ids[i])[0].properties.SEMEL_YISH
+            cityName.innerText = features.filter(x => x.properties.SEMEL_YISH === this.options.ids[i])[0].properties.Shem_Yishu
+            this._container.append(cityName,L.DomUtil.create('br'))
+        }
+
+        return this._container;
+    },
+
+    onRemove: function(map) {
+        // Nothing to do here
+    }
+})
+L.control.question = function(opts) {
+    return new L.Control.Question(opts);
+}
+
 L.Control.Leaderboard = L.Control.extend({
     onAdd: function(map) {
         let topPlayers = getUpdatedLeaderboard()

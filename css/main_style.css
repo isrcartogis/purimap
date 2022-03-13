@@ -8,3 +8,11 @@ body {
     bottom: 0; 
     width: 100%; 
 }
+.questions{
+    direction: rtl;
+    padding: 5px;
+    background-color: white;
+}
+.questions  button {
+    margin-bottom: 3px;
+}
