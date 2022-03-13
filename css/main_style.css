@@ -27,6 +27,7 @@ body {
 }
 .continue h1 {
     text-align: center;
+    direction: ltr;
 }
 .continue input {
     

@@ -1,6 +1,7 @@
 let features = [];
 let usableFeatures = [];
 let userPoints = 0;
+let tries = 0;
 let currentPolygonLayer = L.geoJson({
     "type": "FeatureCollection",
     "features": []
@@ -98,9 +99,9 @@ function getNewRandoms(){
 }
 
 function getAnswer(e){
+    tries +=1
     if(e.target.id == polygon.properties.SEMEL_YISH){
         userPoints += 1
-        usableFeatures = usableFeatures.filter(x => x.properties.SEMEL_YISH != polygon.properties.SEMEL_YISH)
     }
     if(currentQuestions._map){
         map.removeControl(currentQuestions)
@@ -108,7 +109,8 @@ function getAnswer(e){
     if(whatnow._map){
         map.removeControl(whatnow)
     }
-    whatnow = L.control.continue({score:userPoints});
+    usableFeatures = usableFeatures.filter(x => x.properties.SEMEL_YISH != polygon.properties.SEMEL_YISH)
+    whatnow = L.control.continue({score:userPoints,tries:tries});
     whatnow.addTo(map);
 }
 function shuffle(array) {

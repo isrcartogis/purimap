@@ -9,6 +9,7 @@ L.Control.Logo = L.Control.extend({
         let img =  L.DomUtil.create('img');
         img.src = '../logo.png';
         img.style.width = '150px';
+        img.style.marginBottom = "10%"
 
         this._container.append(img)
 
@@ -58,7 +59,8 @@ L.control.question = function(opts) {
 
 L.Control.Continue = L.Control.extend({
     options : {
-        score:0
+        score:0,
+        tries:0
     },
 
     onAdd: function(map) {
@@ -69,7 +71,7 @@ L.Control.Continue = L.Control.extend({
         this._container.append(header)
 
         let score = L.DomUtil.create('h1');
-        score.innerText = this.options.score;
+        score.innerText = ` ${this.options.score} / ${this.options.tries} `;
         this._container.append(score);
 
 
