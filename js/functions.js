@@ -87,7 +87,9 @@ function getNewRandoms(){
         newPolygon = polygonToMarker(center.geometry.coordinates, polygon);
         newBounds = turf.bboxPolygon(turf.bbox(newPolygon))
         newLBounds = L.geoJson(newBounds).getBounds()
-        currentPolygonLayer = L.geoJson(newPolygon,{color: 'red'})
+        coords = newPolygon.geometry.coordinates
+        coords[0].forEach(x => x = x.reverse())
+        currentPolygonLayer = L.polygon(coords,{color: 'red',draggable: true})
         currentPolygonLayer.addTo(map);
         map.fitBounds(newLBounds);
         currentQuestions = L.control.question({ids:questionOptions})
