@@ -34,3 +34,13 @@ body {
     padding: 5px;
     margin: 5px;
 }
+.name-input {
+    direction: rtl;
+    background-color: white;
+}
+.name-input input {
+    margin: 3px
+}
+.name-input label {
+    margin: 3px
+}

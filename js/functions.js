@@ -1,24 +1,20 @@
+const appsscriptUrl = "https://script.google.com/macros/s/AKfycbwXRO_WVyU2eJY73bxukLbku0BY5w1s5SOrcWdURy7vawVFFfyk-_ZBhGpgHsoZTHb-/exec"
 let features = [];
 let usableFeatures = [];
+let userName = "";
 let userPoints = 0;
 let tries = 0;
+let playersList = []
 let currentPolygonLayer = L.geoJson({
     "type": "FeatureCollection",
     "features": []
   })
 
-function getUpdatedLeaderboard(){
-    let playersList = [
-        {name:"player1",score:57},
-        {name:"player12",score:59},
-        {name:"player20",score:5},
-        {name:"player29",score:62},
-        {name:"player9",score:12},
-        {name:"player90",score:1},
-        {name:"player930",score:10},
-        {name:"player52",score:4},
-        {name:"player69",score:5}
-        ]
+async function sendScore(userName,userPoints,tries){
+    let url = appsscriptUrl+`?user=${userName}&score=${userPoints}&tries=${tries}`
+    let response = await fetch(url,{method: "POST"})
+    playersList = await response.json()
+    
     playersList.sort(function (a, b) {return b.score - a.score});
     return playersList
 }
@@ -101,7 +97,12 @@ function getNewRandoms(){
     }
     
 }
-
+function getUserName(){
+    if(whatnow._map){
+        map.removeControl(whatnow)
+    }
+    whatsyourname.addTo(map)
+}
 function openScoreboard(done=false){
     if(leaderboard._map){
         map.removeControl(leaderboard)
@@ -109,8 +110,8 @@ function openScoreboard(done=false){
     if(currentQuestions._map){
         map.removeControl(currentQuestions)
     }
-    if(whatnow._map){
-        map.removeControl(whatnow)
+    if(whatsyourname._map){
+        map.removeControl(whatsyourname)
     }
     leaderboard.addTo(map)
 }

@@ -18,5 +18,6 @@ const map = L.map('map',{
 
 L.control.logo({ position: 'bottomleft' }).addTo(map);
 let leaderboard = L.control.leaderboard({ position: 'topleft' })
+let whatsyourname = L.control.whatsyourname({ position: 'topright' })
 
 onMapLoad()
