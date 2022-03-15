@@ -8,7 +8,7 @@ L.Control.Logo = L.Control.extend({
         L.DomEvent.disableScrollPropagation(this._container)
 
         let img =  L.DomUtil.create('img');
-        img.src = '../logo.png';
+        img.src = './logo.png';
         img.style.width = '150px';
         img.style.marginBottom = "10%"
 
